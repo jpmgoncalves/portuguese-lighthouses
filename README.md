@@ -17,4 +17,4 @@ I love lighthouses. Portugal has a rich collection of them scattered along its c
 
 ## Data
 
-Lighthouse data is sourced from a curated CSV dataset covering mainland Portugal, the Azores, and Madeira.
+Lighthouse data is sourced from a curated CSV dataset covering mainland Portugal, the Azores, and Madeira. The full dataset is available in [`portuguese_lighthouses.csv`](portuguese_lighthouses.csv) — feel free to download and use it for your own projects.
