@@ -1,0 +1,52 @@
+name,location,type,established,lat,lng,height,altitude,reachKm,reachMi,characteristics
+Farol de Alfanzina,Cabo Carvoeiro do Algarve,Costeiro,1920,37.088,-8.4412,23 m,63 m,53.5,29 MI,"Fl (2) W 14,2s"
+Farol da Amêijoa/Azeda,Antiga Quinta da Azeda,Enfiamento,1940,38.5398,-8.877,31 m,61 m,40.7,22 MI,Iso Y 6s
+Farol de Aveiro,Entrada da Barra da Ria de Aveiro,Costeiro,1893,40.644,-8.7465,62 m,66 m,42.5,23 MI,"Fl (4) W 13s"
+Farol da Berlenga,Ilha da Berlenga,Costeiro,1842,39.4165,-9.5078,29 m,121 m,37,20 MI,Fl W 10s
+Farol do Bugio,Forte de S. Lourenço da Cabeça Seca,Costeiro,1658,38.6617,-9.2975,14 m,28 m,27.8,15 MI,Fl G 5s
+Farol Cabo Carvoeiro,Cabo Carvoeiro,Costeiro,1790,39.3618,-9.4063,27 m,57 m,27.5,15 MI,Fl R 6s
+Farol do Cabo da Roca,Cabo da Roca,Costeiro,1772,38.7832,-9.4958,22 m,165 m,48.1,26 MI,"Fl (4) W 17s"
+Farol do Cabo de S. Vicente,Cabo de S. Vicente,Costeiro,1846,37.0242,-8.9952,28 m,86 m,59,32 MI,Fl W 5s
+Farol do Cabo Espichel,Cabo Espichel,Costeiro,1790,38.4168,-9.2148,32 m,168 m,48,26 MI,Fl W 4s
+Farol Cabo Mondego,3 milhas NNW da Barra da Figueira da Foz,Costeiro,1858,40.1922,-8.9038,15 m,97 m,51.5,28 MI,Fl W 5s
+Farol do Cabo Raso,Forte de S. Brás,Costeiro,1894,38.7107,-9.4843,13 m,23 m,27.8,15 MI,"Fl (3) W 9s"
+Farol do Cabo Sardão,Ponta do Cavaleiro / Cabo Sardão,Costeiro,1915,37.5998,-8.8147,17 m,68 m,42.5,23 MI,"Fl (3) W 15s"
+Farol de Esposende,Forte junto à foz do Rio Cávado,Costeiro,1866,41.5442,-8.7892,15 m,21 m,37,20 MI,Fl W 5s
+Farol do Esteiro,Lugar do Esteiro,Portuário,1914,38.705,-9.2585,15 m,82 m,39,21 MI,Oc R 6s
+Farol do Forte Cavalo,Forte de S. Teodósio,Costeiro,1896,38.4358,-9.115,7 m,35 m,26,14 MI,Oc W 5s
+Farol da Gibalta,Encosta da Gibalta Caxias,Portuário,1914,38.7003,-9.2648,21 m,31 m,39,21 MI,Oc R 3s
+Farol da Guia,2.5 km a W de Cascais,Costeiro,1761,38.6968,-9.445,28 m,58 m,35,19 MI,Iso WR 2s
+Farol de Leça,Leça da Palmeira,Costeiro,1926,41.2025,-8.7107,46 m,57 m,52,28 MI,—
+Farol de Montedor,Montedor Viana do Castelo,Costeiro,1910,41.7523,-8.872,28 m,103 m,40,22 MI,"Fl (2) W 9,5s"
+Farol do Outão,Forte do Outão,Costeiro,1775,38.4898,-8.9328,11 m,34 m,22.2,12 MI,Oc R 6s
+Farol Penedo da Saudade,S. Pedro de Moel,Costeiro,1912,39.7653,-9.0297,32 m,55 m,55,30 MI,"Fl (2) W 15s"
+Farol da Ponta da Piedade,Ponta da Piedade,Costeiro,1913,37.0818,-8.668,5 m,51 m,37,20 MI,Fl W 7s
+Farol da Ponta do Altar,Ponta do Altar,Costeiro,1893,37.107,-8.5182,10 m,32 m,29.5,16 MI,LFl W 5s
+Farol de S. Julião,Fortaleza de S. Julião da Barra,Portuário,1775,38.6757,-9.3238,24 m,39 m,25.9,14 MI,Oc R 5s
+Farol de S. Maria,Cabo S. Maria Ilha da Culatra,Costeiro,1851,36.9758,-7.8632,46 m,50 m,46,25 MI,"Fl (4) W 17s"
+Farol de S. Marta,Forte de S. Marta Cascais,Costeiro,1868,38.6917,-9.4195,20 m,25 m,33.3,18 MI,Oc WR 6s
+Farol de Sines,Cabo de Sines,Costeiro,1880,37.9608,-8.879,28 m,56 m,48.2,26 MI,"Fl (2) 15s"
+Farol de V. R. de S. António,Vila Real de S. António,Costeiro,1923,37.1882,-7.4148,46 m,52 m,48,26 MI,"Fl W 6,5s"
+Farol do Albarnaz,Costa Norte Ilha das Flores,Costeiro,1925,39.52,-31.2357,15 m,104 m,40.7,22 MI,Fl W 5s
+Farol do Arnel,Ponta do Arnel Ilha de S. Miguel,Costeiro,1876,37.8242,-25.1357,15 m,66 m,46,25 MI,Fl G 5s
+Farol do Carapacho,Ponta do Carapacho Ilha Graciosa,Costeiro,1956,39.014,-27.9552,14 m,191 m,27.8,15 MI,"Fl (2) W 10s"
+Farol do Cintrão,Ponta do Cintrão S. Miguel,Costeiro,1957,37.8457,-25.4897,14 m,118 m,26,14 MI,"Fl (2) W 10s"
+Farol das Contendas,Ponta das Contendas Terceira,Costeiro,1934,38.6435,-27.0843,13 m,54 m,42.6,23 MI,"Fl (4) WR 15s"
+Farol da Ferraria,Ponta da Ferraria S. Miguel,Costeiro,1901,37.8535,-25.8503,18 m,107 m,50,27 MI,"Fl (3) W 20s"
+Farol do Gonçalo Velho,Ponta do Castelo Ilha de S. Maria,Costeiro,1927,36.9297,-25.0162,14 m,114 m,46.3,25 MI,"Fl (3) W 13,5s"
+Farol da Ponta da Barca,NW da Ilha Graciosa,Costeiro,1930,39.0937,-28.0495,23 m,71 m,37,20 MI,Fl W 7s
+Farol da Ponta Garça,Ponta Garça S. Miguel,Costeiro,1957,37.7143,-25.3698,14 m,101 m,30,16 MI,LFl WR 5s
+Farol da Ponta das Lajes,Ponta SE Ilha das Flores,Costeiro,1925,39.3757,-31.1768,16 m,99 m,48.2,26 MI,"Fl (3) W 28s"
+Farol da Ponta da Ilha,Ponta Este Ilha do Pico,Costeiro,1946,38.4125,-28.0307,19 m,29 m,37,20 MI,"Fl (2) W 20s"
+Farol da Ponta do Topo,Ponta SE Ilha de S. Jorge,Costeiro,1927,38.5488,-27.7547,16 m,58 m,37,20 MI,"Fl (3) W 20s"
+Farol da Ribeirinha,Ponta da Ribeirinha Ilha do Faial,Costeiro,1919,38.5957,-28.6025,6 m,136 m,22.2,12 MI,"Fl (3) W 20s"
+Farol dos Rosais,Ponta dos Rosais Ilha de S. Jorge,Costeiro,1958,38.7537,-28.3122,27 m,260 m,14.8,8 MI,"Fl (2) W 10s"
+Farol da Serreta,Ponta do Queimado Ilha Terceira,Costeiro,1908,38.7642,-27.374,14 m,95 m,25.9,14 MI,Fl W 6s
+Farol do Ilhéu de Cima,Ilhéu de Cima Porto Santo,Costeiro,1901,33.0547,-16.2792,15 m,124 m,38.9,21 MI,"Fl (3) W 15s"
+Farol da Ponta do Pargo,Ponta do Pargo Madeira,Costeiro,1922,32.8138,-17.2632,14 m,312 m,48.1,26 MI,"Fl (3) W 20s"
+Farol de S. Lourenço,Ilhéu de Fora Madeira,Costeiro,1870,32.7303,-16.6568,10 m,103 m,37,20 MI,Fl W 5s
+Farol de S. Jorge,Ponta de S. Jorge Madeira,Costeiro,1959,32.8345,-16.9062,14 m,271 m,28,15 MI,LFl W 5s
+Farol da Mama,Serra de Carnaxide Oeiras,Portuário,1857,38.7276,-9.2272,15 m,82 m,38.9,21 MI,Oc R 6s
+Farol da Chibata,Capuchos Caparica e Trafaria Almada,Portuário,Séc. XX,38.6442,-9.2179,23 m,117 m,27.8,15 MI,F R
+Farol da Nazaré,Forte de São Miguel Arcanjo Nazaré,Costeiro,1903,39.6045,-9.0854,8 m,50 m,25.9,14 MI,Oc W 3s
+Farol de Sagres,Ponta de Sagres Vila do Bispo,Costeiro,1894,36.9945,-8.9493,13 m,53 m,20.4,11 MI,Iso R 2s
