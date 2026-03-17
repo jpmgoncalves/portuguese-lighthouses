@@ -48,6 +48,31 @@
       letter-spacing: 0.3px;
     }
 
+    .footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: 12px 20px;
+      background: linear-gradient(to top, rgba(10, 10, 15, 0.85) 0%, rgba(10, 10, 15, 0) 100%);
+      text-align: center;
+      pointer-events: none;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.3px;
+    }
+
+    .footer a {
+      color: #f5c842;
+      text-decoration: none;
+      pointer-events: auto;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
     .mapboxgl-popup {
       max-width: 320px !important;
     }
@@ -191,6 +216,10 @@
 <div class="header">
   <h1>Faróis de Portugal</h1>
   <p>52 lighthouses across mainland Portugal, Azores & Madeira</p>
+</div>
+
+<div class="footer">
+  Made by <a href="https://joaopmgoncalves.com/" target="_blank">João Gonçalves</a> · <a href="https://github.com/jpmgoncalves/portuguese-lighthouses" target="_blank">Public repo</a>
 </div>
 
 <div class="legend">
