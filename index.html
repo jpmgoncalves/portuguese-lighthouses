@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faróis de Portugal</title>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      overflow: hidden;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: 20px 28px;
+      background: linear-gradient(to bottom, rgba(10, 10, 15, 0.85) 0%, rgba(10, 10, 15, 0) 100%);
+      pointer-events: none;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #f5c842;
+      text-shadow: 0 0 20px rgba(245, 200, 66, 0.3);
+    }
+
+    .header p {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .mapboxgl-popup {
+      max-width: 320px !important;
+    }
+
+    .mapboxgl-popup-content {
+      background: rgba(15, 15, 25, 0.95) !important;
+      border: 1px solid rgba(245, 200, 66, 0.25);
+      border-radius: 12px !important;
+      padding: 20px !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 200, 66, 0.08) !important;
+      backdrop-filter: blur(12px);
+    }
+
+    .mapboxgl-popup-tip {
+      border-top-color: rgba(15, 15, 25, 0.95) !important;
+    }
+
+    .mapboxgl-popup-close-button {
+      color: rgba(255, 255, 255, 0.5) !important;
+      font-size: 18px !important;
+      padding: 4px 8px !important;
+    }
+
+    .mapboxgl-popup-close-button:hover {
+      color: #f5c842 !important;
+      background: transparent !important;
+    }
+
+    .popup-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f5c842;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .popup-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 13px;
+    }
+
+    .popup-detail:last-child {
+      border-bottom: none;
+    }
+
+    .popup-label {
+      color: rgba(255, 255, 255, 0.45);
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .popup-value {
+      color: rgba(255, 255, 255, 0.85);
+      text-align: right;
+    }
+
+    .popup-type {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 3px 10px;
+      background: rgba(245, 200, 66, 0.12);
+      border: 1px solid rgba(245, 200, 66, 0.2);
+      border-radius: 20px;
+      font-size: 11px;
+      color: #f5c842;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .legend {
+      position: absolute;
+      bottom: 32px;
+      left: 28px;
+      z-index: 10;
+      background: rgba(15, 15, 25, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px 18px;
+      backdrop-filter: blur(12px);
+      font-size: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .legend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-circle {
+      width: 20px;
+      height: 12px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    /* Custom marker styles */
+    .lighthouse-marker {
+      width: 14px;
+      height: 14px;
+      background: #f5c842;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(245, 200, 66, 0.6), 0 0 4px rgba(245, 200, 66, 0.8);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .lighthouse-marker:hover {
+      transform: scale(1.4);
+      box-shadow: 0 0 20px rgba(245, 200, 66, 0.8), 0 0 8px rgba(245, 200, 66, 1);
+    }
+
+    .mapboxgl-ctrl-attrib {
+      background: rgba(0,0,0,0.5) !important;
+    }
+
+    .mapboxgl-ctrl-attrib a {
+      color: rgba(255,255,255,0.5) !important;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div class="header">
+  <h1>Faróis de Portugal</h1>
+  <p>52 lighthouses across mainland Portugal, Azores & Madeira</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background: #f5c842; box-shadow: 0 0 6px rgba(245,200,66,0.6);"></div>
+    <span style="color: rgba(255,255,255,0.7);">Lighthouse</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-circle" style="background: rgba(245, 200, 66, 0.12); border: 1px solid rgba(245,200,66,0.3);"></div>
+    <span style="color: rgba(255,255,255,0.7);">Light reach</span>
+  </div>
+</div>
+
+<script>
+  mapboxgl.accessToken = 'pk.eyJ1Ijoiam9hb3BtZ29uY2FsdmVzIiwiYSI6ImNpbTE4dWN5dzAwamZ2bW01cWtmNnltNXkifQ.c8SAP0AVpeyWwVQaUV2Mbg';
+
+  const lighthouses = [
+    { name: "Farol de Alfanzina", location: "Cabo Carvoeiro do Algarve", type: "Costeiro", established: "1920", lat: 37.088, lng: -8.4412, height: "23 m", altitude: "63 m", reachKm: 53.5, reachMi: "29 MI", characteristics: "Fl (2) W 14,2s" },
+    { name: "Farol da Amêijoa/Azeda", location: "Antiga Quinta da Azeda", type: "Enfiamento", established: "1940", lat: 38.5398, lng: -8.877, height: "31 m", altitude: "61 m", reachKm: 40.7, reachMi: "22 MI", characteristics: "Iso Y 6s" },
+    { name: "Farol de Aveiro", location: "Entrada da Barra da Ria de Aveiro", type: "Costeiro", established: "1893", lat: 40.644, lng: -8.7465, height: "62 m", altitude: "66 m", reachKm: 42.5, reachMi: "23 MI", characteristics: "Fl (4) W 13s" },
+    { name: "Farol da Berlenga", location: "Ilha da Berlenga", type: "Costeiro", established: "1842", lat: 39.4165, lng: -9.5078, height: "29 m", altitude: "121 m", reachKm: 37, reachMi: "20 MI", characteristics: "Fl W 10s" },
+    { name: "Farol do Bugio", location: "Forte de S. Lourenço da Cabeça Seca", type: "Costeiro", established: "1658", lat: 38.6617, lng: -9.2975, height: "14 m", altitude: "28 m", reachKm: 27.8, reachMi: "15 MI", characteristics: "Fl G 5s" },
+    { name: "Farol Cabo Carvoeiro", location: "Cabo Carvoeiro", type: "Costeiro", established: "1790", lat: 39.3618, lng: -9.4063, height: "27 m", altitude: "57 m", reachKm: 27.5, reachMi: "15 MI", characteristics: "Fl R 6s" },
+    { name: "Farol do Cabo da Roca", location: "Cabo da Roca", type: "Costeiro", established: "1772", lat: 38.7832, lng: -9.4958, height: "22 m", altitude: "165 m", reachKm: 48.1, reachMi: "26 MI", characteristics: "Fl (4) W 17s" },
+    { name: "Farol do Cabo de S. Vicente", location: "Cabo de S. Vicente", type: "Costeiro", established: "1846", lat: 37.0242, lng: -8.9952, height: "28 m", altitude: "86 m", reachKm: 59, reachMi: "32 MI", characteristics: "Fl W 5s" },
+    { name: "Farol do Cabo Espichel", location: "Cabo Espichel", type: "Costeiro", established: "1790", lat: 38.4168, lng: -9.2148, height: "32 m", altitude: "168 m", reachKm: 48, reachMi: "26 MI", characteristics: "Fl W 4s" },
+    { name: "Farol Cabo Mondego", location: "3 milhas NNW da Barra da Figueira da Foz", type: "Costeiro", established: "1858", lat: 40.1922, lng: -8.9038, height: "15 m", altitude: "97 m", reachKm: 51.5, reachMi: "28 MI", characteristics: "Fl W 5s" },
+    { name: "Farol do Cabo Raso", location: "Forte de S. Brás", type: "Costeiro", established: "1894", lat: 38.7107, lng: -9.4843, height: "13 m", altitude: "23 m", reachKm: 27.8, reachMi: "15 MI", characteristics: "Fl (3) W 9s" },
+    { name: "Farol do Cabo Sardão", location: "Ponta do Cavaleiro / Cabo Sardão", type: "Costeiro", established: "1915", lat: 37.5998, lng: -8.8147, height: "17 m", altitude: "68 m", reachKm: 42.5, reachMi: "23 MI", characteristics: "Fl (3) W 15s" },
+    { name: "Farol de Esposende", location: "Forte junto à foz do Rio Cávado", type: "Costeiro", established: "1866", lat: 41.5442, lng: -8.7892, height: "15 m", altitude: "21 m", reachKm: 37, reachMi: "20 MI", characteristics: "Fl W 5s" },
+    { name: "Farol do Esteiro", location: "Lugar do Esteiro", type: "Portuário", established: "1914", lat: 38.705, lng: -9.2585, height: "15 m", altitude: "82 m", reachKm: 39, reachMi: "21 MI", characteristics: "Oc R 6s" },
+    { name: "Farol do Forte Cavalo", location: "Forte de S. Teodósio", type: "Costeiro", established: "1896", lat: 38.4358, lng: -9.115, height: "7 m", altitude: "35 m", reachKm: 26, reachMi: "14 MI", characteristics: "Oc W 5s" },
+    { name: "Farol da Gibalta", location: "Encosta da Gibalta, Caxias", type: "Portuário", established: "1914", lat: 38.7003, lng: -9.2648, height: "21 m", altitude: "31 m", reachKm: 39, reachMi: "21 MI", characteristics: "Oc R 3s" },
+    { name: "Farol da Guia", location: "2.5 km a W de Cascais", type: "Costeiro", established: "1761", lat: 38.6968, lng: -9.445, height: "28 m", altitude: "58 m", reachKm: 35, reachMi: "19 MI", characteristics: "Iso WR 2s" },
+    { name: "Farol de Leça", location: "Leça da Palmeira", type: "Costeiro", established: "1926", lat: 41.2025, lng: -8.7107, height: "46 m", altitude: "57 m", reachKm: 52, reachMi: "28 MI", characteristics: "—" },
+    { name: "Farol de Montedor", location: "Montedor, Viana do Castelo", type: "Costeiro", established: "1910", lat: 41.7523, lng: -8.872, height: "28 m", altitude: "103 m", reachKm: 40, reachMi: "22 MI", characteristics: "Fl (2) W 9,5s" },
+    { name: "Farol do Outão", location: "Forte do Outão", type: "Costeiro", established: "1775", lat: 38.4898, lng: -8.9328, height: "11 m", altitude: "34 m", reachKm: 22.2, reachMi: "12 MI", characteristics: "Oc R 6s" },
+    { name: "Farol Penedo da Saudade", location: "S. Pedro de Moel", type: "Costeiro", established: "1912", lat: 39.7653, lng: -9.0297, height: "32 m", altitude: "55 m", reachKm: 55, reachMi: "30 MI", characteristics: "Fl (2) W 15s" },
+    { name: "Farol da Ponta da Piedade", location: "Ponta da Piedade", type: "Costeiro", established: "1913", lat: 37.0818, lng: -8.668, height: "5 m", altitude: "51 m", reachKm: 37, reachMi: "20 MI", characteristics: "Fl W 7s" },
+    { name: "Farol da Ponta do Altar", location: "Ponta do Altar", type: "Costeiro", established: "1893", lat: 37.107, lng: -8.5182, height: "10 m", altitude: "32 m", reachKm: 29.5, reachMi: "16 MI", characteristics: "LFl W 5s" },
+    { name: "Farol de S. Julião", location: "Fortaleza de S. Julião da Barra", type: "Portuário", established: "1775", lat: 38.6757, lng: -9.3238, height: "24 m", altitude: "39 m", reachKm: 25.9, reachMi: "14 MI", characteristics: "Oc R 5s" },
+    { name: "Farol de S. Maria", location: "Cabo S. Maria, Ilha da Culatra", type: "Costeiro", established: "1851", lat: 36.9758, lng: -7.8632, height: "46 m", altitude: "50 m", reachKm: 46, reachMi: "25 MI", characteristics: "Fl (4) W 17s" },
+    { name: "Farol de S. Marta", location: "Forte de S. Marta, Cascais", type: "Costeiro", established: "1868", lat: 38.6917, lng: -9.4195, height: "20 m", altitude: "25 m", reachKm: 33.3, reachMi: "18 MI", characteristics: "Oc WR 6s" },
+    { name: "Farol de Sines", location: "Cabo de Sines", type: "Costeiro", established: "1880", lat: 37.9608, lng: -8.879, height: "28 m", altitude: "56 m", reachKm: 48.2, reachMi: "26 MI", characteristics: "Fl (2) 15s" },
+    { name: "Farol de V. R. de S. António", location: "Vila Real de S. António", type: "Costeiro", established: "1923", lat: 37.1882, lng: -7.4148, height: "46 m", altitude: "52 m", reachKm: 48, reachMi: "26 MI", characteristics: "Fl W 6,5s" },
+    // Azores
+    { name: "Farol do Albarnaz", location: "Costa Norte, Ilha das Flores", type: "Costeiro", established: "1925", lat: 39.52, lng: -31.2357, height: "15 m", altitude: "104 m", reachKm: 40.7, reachMi: "22 MI", characteristics: "Fl W 5s" },
+    { name: "Farol do Arnel", location: "Ponta do Arnel, Ilha de S. Miguel", type: "Costeiro", established: "1876", lat: 37.8242, lng: -25.1357, height: "15 m", altitude: "66 m", reachKm: 46, reachMi: "25 MI", characteristics: "Fl G 5s" },
+    { name: "Farol do Carapacho", location: "Ponta do Carapacho, Ilha Graciosa", type: "Costeiro", established: "1956", lat: 39.014, lng: -27.9552, height: "14 m", altitude: "191 m", reachKm: 27.8, reachMi: "15 MI", characteristics: "Fl (2) W 10s" },
+    { name: "Farol do Cintrão", location: "Ponta do Cintrão, S. Miguel", type: "Costeiro", established: "1957", lat: 37.8457, lng: -25.4897, height: "14 m", altitude: "118 m", reachKm: 26, reachMi: "14 MI", characteristics: "Fl (2) W 10s" },
+    { name: "Farol das Contendas", location: "Ponta das Contendas, Terceira", type: "Costeiro", established: "1934", lat: 38.6435, lng: -27.0843, height: "13 m", altitude: "54 m", reachKm: 42.6, reachMi: "23 MI", characteristics: "Fl (4) WR 15s" },
+    { name: "Farol da Ferraria", location: "Ponta da Ferraria, S. Miguel", type: "Costeiro", established: "1901", lat: 37.8535, lng: -25.8503, height: "18 m", altitude: "107 m", reachKm: 50, reachMi: "27 MI", characteristics: "Fl (3) W 20s" },
+    { name: "Farol do Gonçalo Velho", location: "Ponta do Castelo, Ilha de S. Maria", type: "Costeiro", established: "1927", lat: 36.9297, lng: -25.0162, height: "14 m", altitude: "114 m", reachKm: 46.3, reachMi: "25 MI", characteristics: "Fl (3) W 13,5s" },
+    { name: "Farol da Ponta da Barca", location: "NW da Ilha Graciosa", type: "Costeiro", established: "1930", lat: 39.0937, lng: -28.0495, height: "23 m", altitude: "71 m", reachKm: 37, reachMi: "20 MI", characteristics: "Fl W 7s" },
+    { name: "Farol da Ponta Garça", location: "Ponta Garça, S. Miguel", type: "Costeiro", established: "1957", lat: 37.7143, lng: -25.3698, height: "14 m", altitude: "101 m", reachKm: 30, reachMi: "16 MI", characteristics: "LFl WR 5s" },
+    { name: "Farol da Ponta das Lajes", location: "Ponta SE, Ilha das Flores", type: "Costeiro", established: "1925", lat: 39.3757, lng: -31.1768, height: "16 m", altitude: "99 m", reachKm: 48.2, reachMi: "26 MI", characteristics: "Fl (3) W 28s" },
+    { name: "Farol da Ponta da Ilha", location: "Ponta Este, Ilha do Pico", type: "Costeiro", established: "1946", lat: 38.4125, lng: -28.0307, height: "19 m", altitude: "29 m", reachKm: 37, reachMi: "20 MI", characteristics: "Fl (2) W 20s" },
+    { name: "Farol da Ponta do Topo", location: "Ponta SE, Ilha de S. Jorge", type: "Costeiro", established: "1927", lat: 38.5488, lng: -27.7547, height: "16 m", altitude: "58 m", reachKm: 37, reachMi: "20 MI", characteristics: "Fl (3) W 20s" },
+    { name: "Farol da Ribeirinha", location: "Ponta da Ribeirinha, Ilha do Faial", type: "Costeiro", established: "1919", lat: 38.5957, lng: -28.6025, height: "6 m", altitude: "136 m", reachKm: 22.2, reachMi: "12 MI", characteristics: "Fl (3) W 20s" },
+    { name: "Farol dos Rosais", location: "Ponta dos Rosais, Ilha de S. Jorge", type: "Costeiro", established: "1958", lat: 38.7537, lng: -28.3122, height: "27 m", altitude: "260 m", reachKm: 14.8, reachMi: "8 MI", characteristics: "Fl (2) W 10s" },
+    { name: "Farol da Serreta", location: "Ponta do Queimado, Ilha Terceira", type: "Costeiro", established: "1908", lat: 38.7642, lng: -27.374, height: "14 m", altitude: "95 m", reachKm: 25.9, reachMi: "14 MI", characteristics: "Fl W 6s" },
+    // Madeira
+    { name: "Farol do Ilhéu de Cima", location: "Ilhéu de Cima, Porto Santo", type: "Costeiro", established: "1901", lat: 33.0547, lng: -16.2792, height: "15 m", altitude: "124 m", reachKm: 38.9, reachMi: "21 MI", characteristics: "Fl (3) W 15s" },
+    { name: "Farol da Ponta do Pargo", location: "Ponta do Pargo, Madeira", type: "Costeiro", established: "1922", lat: 32.8138, lng: -17.2632, height: "14 m", altitude: "312 m", reachKm: 48.1, reachMi: "26 MI", characteristics: "Fl (3) W 20s" },
+    { name: "Farol de S. Lourenço", location: "Ilhéu de Fora, Madeira", type: "Costeiro", established: "1870", lat: 32.7303, lng: -16.6568, height: "10 m", altitude: "103 m", reachKm: 37, reachMi: "20 MI", characteristics: "Fl W 5s" },
+    { name: "Farol de S. Jorge", location: "Ponta de S. Jorge, Madeira", type: "Costeiro", established: "1959", lat: 32.8345, lng: -16.9062, height: "14 m", altitude: "271 m", reachKm: 28, reachMi: "15 MI", characteristics: "LFl W 5s" },
+    // Extra mainland
+    { name: "Farol da Mama", location: "Serra de Carnaxide, Oeiras", type: "Portuário", established: "1857", lat: 38.7276, lng: -9.2272, height: "15 m", altitude: "82 m", reachKm: 38.9, reachMi: "21 MI", characteristics: "Oc R 6s" },
+    { name: "Farol da Chibata", location: "Capuchos, Caparica e Trafaria, Almada", type: "Portuário", established: "Séc. XX", lat: 38.6442, lng: -9.2179, height: "23 m", altitude: "117 m", reachKm: 27.8, reachMi: "15 MI", characteristics: "F R" },
+    { name: "Farol da Nazaré", location: "Forte de São Miguel Arcanjo, Nazaré", type: "Costeiro", established: "1903", lat: 39.6045, lng: -9.0854, height: "8 m", altitude: "50 m", reachKm: 25.9, reachMi: "14 MI", characteristics: "Oc W 3s" },
+    { name: "Farol de Sagres", location: "Ponta de Sagres, Vila do Bispo", type: "Costeiro", established: "1894", lat: 36.9945, lng: -8.9493, height: "13 m", altitude: "53 m", reachKm: 20.4, reachMi: "11 MI", characteristics: "Iso R 2s" },
+  ];
+
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/dark-v11',
+    center: [-8.5, 39.5],
+    zoom: 6,
+    pitch: 0,
+    attributionControl: true,
+  });
+
+  map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
+
+  map.on('load', () => {
+    // Build circle features from turf
+    const circleFeatures = lighthouses.map(lh => {
+      const circle = turf.circle([lh.lng, lh.lat], lh.reachKm, {
+        steps: 80,
+        units: 'kilometers'
+      });
+      circle.properties = { name: lh.name };
+      return circle;
+    });
+
+    const circleCollection = turf.featureCollection(circleFeatures);
+
+    // Add circle source and layers
+    map.addSource('light-reach', {
+      type: 'geojson',
+      data: circleCollection
+    });
+
+    map.addLayer({
+      id: 'light-reach-fill',
+      type: 'fill',
+      source: 'light-reach',
+      paint: {
+        'fill-color': '#f5c842',
+        'fill-opacity': 0.06
+      }
+    });
+
+    map.addLayer({
+      id: 'light-reach-border',
+      type: 'line',
+      source: 'light-reach',
+      paint: {
+        'line-color': '#f5c842',
+        'line-opacity': 0.25,
+        'line-width': 1
+      }
+    });
+
+    // Add lighthouse points as a GeoJSON source (canvas-rendered, moves with map)
+    const pointFeatures = lighthouses.map(lh => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [lh.lng, lh.lat] },
+      properties: {
+        name: lh.name,
+        location: lh.location,
+        type: lh.type,
+        established: lh.established,
+        height: lh.height,
+        altitude: lh.altitude,
+        reachKm: lh.reachKm,
+        reachMi: lh.reachMi,
+        characteristics: lh.characteristics
+      }
+    }));
+
+    map.addSource('lighthouse-points', {
+      type: 'geojson',
+      data: turf.featureCollection(pointFeatures)
+    });
+
+    // Outer glow
+    map.addLayer({
+      id: 'lighthouse-glow',
+      type: 'circle',
+      source: 'lighthouse-points',
+      paint: {
+        'circle-radius': 10,
+        'circle-color': '#f5c842',
+        'circle-opacity': 0.15,
+        'circle-blur': 1
+      }
+    });
+
+    // Main dot
+    map.addLayer({
+      id: 'lighthouse-dot',
+      type: 'circle',
+      source: 'lighthouse-points',
+      paint: {
+        'circle-radius': 5,
+        'circle-color': '#f5c842',
+        'circle-opacity': 1,
+        'circle-stroke-width': 1.5,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
+
+    // --- Rotating beam animation ---
+    let beamAnimationId = null;
+    let activeBeamLighthouse = null;
+    let activePopup = null;
+
+    const emptyGeoJSON = turf.featureCollection([]);
+
+    map.addSource('light-beam', {
+      type: 'geojson',
+      data: emptyGeoJSON
+    });
+
+    // Beam fill — bright gradient-like effect
+    map.addLayer({
+      id: 'light-beam-fill',
+      type: 'fill',
+      source: 'light-beam',
+      paint: {
+        'fill-color': '#f5c842',
+        'fill-opacity': 0.18
+      }
+    });
+
+    // Beam edge glow
+    map.addLayer({
+      id: 'light-beam-edge',
+      type: 'line',
+      source: 'light-beam',
+      paint: {
+        'line-color': '#f5c842',
+        'line-opacity': 0.4,
+        'line-width': 1.5,
+        'line-blur': 2
+      }
+    });
+
+    function startBeamAnimation(lh) {
+      stopBeamAnimation();
+      activeBeamLighthouse = lh;
+
+      const beamWidth = 8; // degrees width of each beam
+      const speed = 0.4;   // degrees per frame
+      let angle = 0;
+
+      function animate() {
+        angle = (angle + speed) % 360;
+
+        // Create two opposite beam sectors
+        const sector1 = turf.sector(
+          [lh.lng, lh.lat], lh.reachKm,
+          angle - beamWidth / 2, angle + beamWidth / 2,
+          { units: 'kilometers', steps: 40 }
+        );
+        const sector2 = turf.sector(
+          [lh.lng, lh.lat], lh.reachKm,
+          angle + 180 - beamWidth / 2, angle + 180 + beamWidth / 2,
+          { units: 'kilometers', steps: 40 }
+        );
+
+        map.getSource('light-beam').setData(
+          turf.featureCollection([sector1, sector2])
+        );
+
+        beamAnimationId = requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    function stopBeamAnimation() {
+      if (beamAnimationId) {
+        cancelAnimationFrame(beamAnimationId);
+        beamAnimationId = null;
+      }
+      activeBeamLighthouse = null;
+      map.getSource('light-beam')?.setData(emptyGeoJSON);
+    }
+
+    // Popup on click + start beam
+    map.on('click', 'lighthouse-dot', (e) => {
+      const props = e.features[0].properties;
+      const coords = e.features[0].geometry.coordinates.slice();
+
+      // Find the matching lighthouse data for reach
+      const lh = lighthouses.find(l => l.name === props.name);
+
+      // If clicking the same lighthouse, toggle off
+      if (activeBeamLighthouse && activeBeamLighthouse.name === props.name) {
+        stopBeamAnimation();
+        if (activePopup) { activePopup.remove(); activePopup = null; }
+        return;
+      }
+
+      // Close previous popup
+      if (activePopup) { activePopup.remove(); }
+
+      // Start beam animation
+      if (lh) startBeamAnimation(lh);
+
+      const popupHTML = `
+        <div class="popup-name">${props.name}</div>
+        <div class="popup-detail">
+          <span class="popup-label">Location</span>
+          <span class="popup-value">${props.location}</span>
+        </div>
+        <div class="popup-detail">
+          <span class="popup-label">Established</span>
+          <span class="popup-value">${props.established}</span>
+        </div>
+        <div class="popup-detail">
+          <span class="popup-label">Tower Height</span>
+          <span class="popup-value">${props.height}</span>
+        </div>
+        <div class="popup-detail">
+          <span class="popup-label">Altitude</span>
+          <span class="popup-value">${props.altitude}</span>
+        </div>
+        <div class="popup-detail">
+          <span class="popup-label">Light Reach</span>
+          <span class="popup-value">${props.reachKm} km (${props.reachMi})</span>
+        </div>
+        <div class="popup-detail">
+          <span class="popup-label">Signal</span>
+          <span class="popup-value">${props.characteristics}</span>
+        </div>
+        <div class="popup-type">${props.type}</div>
+      `;
+
+      activePopup = new mapboxgl.Popup({ offset: 12 })
+        .setLngLat(coords)
+        .setHTML(popupHTML)
+        .on('close', () => {
+          stopBeamAnimation();
+          activePopup = null;
+        })
+        .addTo(map);
+    });
+
+    // Click on empty map area stops animation
+    map.on('click', (e) => {
+      const features = map.queryRenderedFeatures(e.point, { layers: ['lighthouse-dot'] });
+      if (features.length === 0) {
+        stopBeamAnimation();
+        if (activePopup) { activePopup.remove(); activePopup = null; }
+      }
+    });
+
+    // Pointer cursor on hover
+    map.on('mouseenter', 'lighthouse-dot', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'lighthouse-dot', () => {
+      map.getCanvas().style.cursor = '';
+    });
+  });
+</script>
+
+</body>
+</html>
