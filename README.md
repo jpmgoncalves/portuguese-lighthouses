@@ -1,5 +1,7 @@
 # Portuguese Lighthouses Map
 
+**[View Live Map](https://portuguese-lighthouses.vercel.app/)**
+
 An interactive map of all lighthouses in Portugal, built with [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/).
 
 ## Why?
