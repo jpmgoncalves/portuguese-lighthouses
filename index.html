@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Faróis de Portugal</title>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HB5056VHHS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-HB5056VHHS');
+  </script>
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
@@ -293,16 +301,25 @@
     { name: "Farol de Sagres", location: "Ponta de Sagres, Vila do Bispo", type: "Costeiro", established: "1894", lat: 36.9945, lng: -8.9493, height: "13 m", altitude: "53 m", reachKm: 20.4, reachMi: "11 MI", characteristics: "Iso R 2s" },
   ];
 
+  // Calculate bounds to fit all lighthouses
+  const bounds = new mapboxgl.LngLatBounds();
+  lighthouses.forEach(lh => bounds.extend([lh.lng, lh.lat]));
+
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v11',
-    center: [-8.5, 39.5],
+    center: bounds.getCenter(),
     zoom: 6,
     pitch: 0,
     attributionControl: true,
   });
 
   map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'top-right');
+
+  // Fit map to show all lighthouses on load
+  map.on('load', () => {
+    map.fitBounds(bounds, { padding: 50, maxZoom: 8 });
+  });
 
   map.on('load', () => {
     // Build circle features from turf
